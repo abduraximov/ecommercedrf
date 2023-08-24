@@ -15,6 +15,7 @@ from pathlib import Path
 import environ
 
 from core.jazzmin_conf import *  # noqa
+from core.ckeditor import *  # noqa
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -54,6 +55,8 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_yasg",
     "corsheaders",
+    "ckeditor",
+    "ckeditor_uploader",
 ]
 
 REST_FRAMEWORK = {
