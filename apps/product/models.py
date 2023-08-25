@@ -65,7 +65,7 @@ class Product(BaseModel):
     description = RichTextUploadingField(verbose_name=_("Product Description"))
     is_recommend = models.BooleanField(default=False, verbose_name=_("Is Recommended"))
     seller_profile = models.ForeignKey(
-        "user.Profile", on_delete=models.CASCADE, verbose_name=_("Product seller"), related_name="products"
+        "user.SellerProfile", on_delete=models.CASCADE, verbose_name=_("Product seller"), related_name="products"
     )
     category = models.ForeignKey(
         "product.Category", on_delete=models.CASCADE, related_name="products", verbose_name=_("Category")
@@ -110,7 +110,7 @@ class ProductImage(models.Model):
 
 class ProductType(BaseModel):
     product = models.ForeignKey(
-        "product.Product", on_delete=models.CASCADE, verbose_name=_("Product Type"), related_name="stock"
+        "product.Product", on_delete=models.CASCADE, verbose_name=_("Product"), related_name="stock"
     )
     color = models.ForeignKey(
         "product.Color",
@@ -136,13 +136,13 @@ class ProductType(BaseModel):
     )
 
     class Meta:
-        verbose_name = _("Product quantity")
-        verbose_name_plural = _("Products quantity")
+        verbose_name = _("Product type")
+        verbose_name_plural = _("Products type")
 
 
 class ProfitPrice(models.Model):
     product = models.ForeignKey(
-        "product.Product", on_delete=models.CASCADE, related_name="profit_prices", verbose_name=_("Profit price")
+        "product.Product", on_delete=models.CASCADE, related_name="profit_prices", verbose_name=_("Product")
     )
     min_quantity = models.PositiveIntegerField(verbose_name=_("Minimum Quantity"))
     max_quantity = models.PositiveIntegerField(verbose_name=_("Maximum Quantity"))

@@ -10,4 +10,10 @@ class BaseModel(models.Model):
         abstract = True
 
 
-
+#
+# class Review(BaseModel):
+#     product = models.ForeignKey("product.Product",
+#                                 on_delete=models.CASCADE,
+#                                 related_name="reviews",
+#                                 verbose_name=_("Product"))
+#     user = models
