@@ -1,6 +1,7 @@
-from django.db.models import Min
+from django.db.models import Min, Avg
 from rest_framework import serializers
 
+from apps.common.models import Review
 from apps.product.models import Category, Product, ProductType
 
 
@@ -60,4 +61,52 @@ class RecommendProductsSerializer(serializers.ModelSerializer):
             data["image"] = None
             data["price"] = None
 
+        return data
+
+
+class CategoryProductsSerializer(serializers.ModelSerializer):
+    product_type = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "description",
+            "seller_profile",
+            "category",
+            "brand",
+            "features",
+            "conditions",
+            "product_type",
+            "reviews"
+        )
+
+    def get_product_type(self, obj):
+        product_types = ProductType.objects.filter(product=obj)
+        data = {}
+        data["count_products"] = product_types.count()
+        if product_types.exists():
+            product_type = product_types.first()
+            if product_type.images.exists():
+                image_serializer = ImageSerializer(product_type.images.first())
+                data["image"] = image_serializer.data
+            else:
+                data["image"] = None
+            data["price"] = product_type.price
+            if product_type.sale_price:
+                data["sale_price"] = product_type.sale_price
+        else:
+            data["image"] = None
+            data["price"] = None
+
+        return data
+
+    def get_reviews(self, obj):
+        review = Review.objects.filter(product=obj)
+        data = {
+            "count_review": review.count(),
+            "avarege_rating": review.aggregate(avg_rate=Avg("rating"))["avg_rate"]
+        }
         return data

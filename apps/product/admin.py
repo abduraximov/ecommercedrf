@@ -5,7 +5,13 @@ from apps.product.models import (Brand, Category, Color, Condition, Feature,
                                  ProfitPrice)
 
 
-@admin.register(Category, Brand, Feature, Condition, Color)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('name',)}
+    list_display = ("id", "name", "slug")
+
+
+@admin.register(Brand, Feature, Condition, Color)
 class ListAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
 
