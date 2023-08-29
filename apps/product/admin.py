@@ -25,10 +25,7 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "product",
-    )
+    list_display = ("id", "product", "price")
 
 
 @admin.register(ProfitPrice)
