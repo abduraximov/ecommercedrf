@@ -37,7 +37,7 @@ class SellerProfile(models.Model):
 
 class Favorite(BaseModel):
     product = models.ForeignKey(
-        "product.ProductType", on_delete=models.CASCADE, related_name="favorites", verbose_name=_("Product")
+        "product.Product", on_delete=models.CASCADE, related_name="favorites", verbose_name=_("Product")
     )
     user = models.ForeignKey("user.Profile", on_delete=models.CASCADE, related_name="favorites", verbose_name=_("User"))
 

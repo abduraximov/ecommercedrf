@@ -1,8 +1,8 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 
 from apps.common.models import BaseModel
 
@@ -10,7 +10,12 @@ from apps.common.models import BaseModel
 class Category(BaseModel):
     name = models.CharField(max_length=150, verbose_name=_("Category name"))
     slug = models.SlugField(max_length=150, unique=True, blank=True, null=True)
-    image = models.ImageField(upload_to="category_images/", verbose_name=_("Category Image"), blank=True, null=True)
+    image = models.ImageField(
+        upload_to="category_images/",
+        verbose_name=_("Category Image"),
+        blank=True,
+        null=True,
+    )
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -72,10 +77,16 @@ class Product(BaseModel):
     description = RichTextUploadingField(verbose_name=_("Product Description"))
     is_recommend = models.BooleanField(default=False, verbose_name=_("Is Recommended"))
     seller_profile = models.ForeignKey(
-        "user.SellerProfile", on_delete=models.CASCADE, verbose_name=_("Product seller"), related_name="products"
+        "user.SellerProfile",
+        on_delete=models.CASCADE,
+        verbose_name=_("Product seller"),
+        related_name="products",
     )
     category = models.ForeignKey(
-        "product.Category", on_delete=models.CASCADE, related_name="products", verbose_name=_("Category")
+        "product.Category",
+        on_delete=models.CASCADE,
+        related_name="products",
+        verbose_name=_("Category"),
     )
     brand = models.ForeignKey(
         "product.Brand",
@@ -86,10 +97,16 @@ class Product(BaseModel):
         related_name="products",
     )
     features = models.ManyToManyField(
-        "product.Feature", blank=True, verbose_name=_("Features"), related_name="products"
+        "product.Feature",
+        blank=True,
+        verbose_name=_("Features"),
+        related_name="products",
     )
     conditions = models.ManyToManyField(
-        "product.Condition", blank=True, verbose_name=_("Conditions"), related_name="products"
+        "product.Condition",
+        blank=True,
+        verbose_name=_("Conditions"),
+        related_name="products",
     )
 
     class Meta:
@@ -117,7 +134,10 @@ class ProductImage(models.Model):
 
 class ProductType(BaseModel):
     product = models.ForeignKey(
-        "product.Product", on_delete=models.CASCADE, verbose_name=_("Product"), related_name="stock"
+        "product.Product",
+        on_delete=models.CASCADE,
+        verbose_name=_("Product"),
+        related_name="stock",
     )
     color = models.ForeignKey(
         "product.Color",
@@ -128,7 +148,10 @@ class ProductType(BaseModel):
         blank=True,
     )
     price = models.DecimalField(
-        max_digits=18, decimal_places=2, validators=[MinValueValidator(0)], verbose_name=_("Price")
+        max_digits=18,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        verbose_name=_("Price"),
     )
     sale_price = models.DecimalField(
         max_digits=18,
@@ -139,7 +162,9 @@ class ProductType(BaseModel):
         verbose_name=_("Sale price"),
     )
     images = models.ManyToManyField(
-        "product.ProductImage", verbose_name=_("Product images"), related_name="product_stocks"
+        "product.ProductImage",
+        verbose_name=_("Product images"),
+        related_name="product_stocks",
     )
 
     class Meta:
@@ -149,7 +174,10 @@ class ProductType(BaseModel):
 
 class ProfitPrice(models.Model):
     product = models.ForeignKey(
-        "product.Product", on_delete=models.CASCADE, related_name="profit_prices", verbose_name=_("Product")
+        "product.Product",
+        on_delete=models.CASCADE,
+        related_name="profit_prices",
+        verbose_name=_("Product"),
     )
     min_quantity = models.PositiveIntegerField(verbose_name=_("Minimum Quantity"))
     max_quantity = models.PositiveIntegerField(verbose_name=_("Maximum Quantity"))

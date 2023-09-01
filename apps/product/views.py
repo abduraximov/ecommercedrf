@@ -1,10 +1,13 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 
+from apps.product.filters import ProductFilter
 from apps.product.models import Category, Product
-from apps.product.serializers import (MainCategorySerializer,
+from apps.product.serializers import (CategoryProductsSerializer,
+                                      MainCategorySerializer,
                                       PopularCategorySerializer,
-                                      RecommendProductsSerializer,
-                                      CategoryProductsSerializer)
+                                      ProductDetailSerializer,
+                                      RecommendProductsSerializer)
 
 
 class MainCategoryAPIView(generics.ListAPIView):
@@ -30,8 +33,16 @@ class RecommendProductsAPIView(generics.ListAPIView):
 
 class CategoryProductsAPIView(generics.ListAPIView):
     serializer_class = CategoryProductsSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
 
     def get_queryset(self):
         slug = self.kwargs.get("slug", None)
         data = Product.objects.filter(category__slug=slug)
         return data
+
+
+class ProductDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = ProductDetailSerializer
+    queryset = Product.objects.all()
+    lookup_field = "pk"

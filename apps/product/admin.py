@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from apps.product.models import (Brand, Category, Color, Condition, Feature,
-                                 Product, ProductImage, ProductType,
-                                 ProfitPrice)
+from apps.product.models import Condition
+from apps.product.models import (Brand, Category, Color, Feature, Product,
+                                 ProductImage, ProductType, ProfitPrice)
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('name',)}
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ("id", "name", "slug")
 
 

@@ -1,8 +1,9 @@
-from django.db.models import Min, Avg
+from django.db.models import Avg, Min
 from rest_framework import serializers
 
 from apps.common.models import Review
 from apps.product.models import Category, Product, ProductType
+from apps.user.models import Favorite, SellerProfile
 
 
 class MainCategorySerializer(serializers.ModelSerializer):
@@ -67,6 +68,7 @@ class RecommendProductsSerializer(serializers.ModelSerializer):
 class CategoryProductsSerializer(serializers.ModelSerializer):
     product_type = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -80,7 +82,8 @@ class CategoryProductsSerializer(serializers.ModelSerializer):
             "features",
             "conditions",
             "product_type",
-            "reviews"
+            "reviews",
+            "is_favorite",
         )
 
     def get_product_type(self, obj):
@@ -107,6 +110,44 @@ class CategoryProductsSerializer(serializers.ModelSerializer):
         review = Review.objects.filter(product=obj)
         data = {
             "count_review": review.count(),
-            "avarege_rating": review.aggregate(avg_rate=Avg("rating"))["avg_rate"]
+            "avarege_rating": review.aggregate(avg_rate=Avg("rating"))["avg_rate"],
         }
         return data
+
+    def get_is_favorite(self, obj):
+        request = self.context.get("request")
+
+        if request and request.user.is_authenticated:
+            profile = request.user.profile
+            is_favorite = Favorite.objects.filter(user=profile, product=obj).exists()
+            return is_favorite
+        return False
+
+
+class SellerProfileProductDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SellerProfile
+        fields = ("id", "company_name", "contact_info", "company_photo")
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    # product_type = serializers.SerializerMethodField()
+    # reviews = serializers.SerializerMethodField()
+    # is_favorite = serializers.SerializerMethodField()
+    seller_profile = SellerProfileProductDetailSerializer()
+
+    class Meta:
+        model = Product
+        fields = (
+            "id",
+            "name",
+            "description",
+            "seller_profile",
+            "category",
+            "brand",
+            "features",
+            "conditions",
+            # "product_type",
+            # "reviews",
+            # "is_favorite"
+        )
